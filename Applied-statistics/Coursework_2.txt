@@ -1,0 +1,136 @@
+Import the njgolf dataset into your R studio session from the following URL: 
+http://www.eecs.qmul.ac.uk/~steve/ecs764/njgolf.csv. 
+
+The data should appear in your environment (top right quarter of the R studio window). Explore the various fields present in the data, including:
+- selling price (sprice)
+- lot size (lotsize)
+- numbers of beds (beds)
+- dining room area (drarea)
+- kitchen area (kitarea)
+- type of lot (lotsizef)
+
+You can list and manipulate the content (values) of the fields in R directly by using "njgolf$field". Check some of the fields, their summary statistics (using the "summary()" R command).
+
+There are three different prices in the dataset, selling price (sprice), offered price (oprice), and listed price (lprice). Often, different variations of a given concept are provided in data as different fields, which may or may not be the case in this specific situation.  Rely on your understanding of descriptive statistics to build more confidence about the 3 versions of prices of this dataset, by using the summary() command, for example for the sprice field:
+> summary(njgolf$sprice)
+
+
+Q2.1 - Prices - descriptive statistics - MCQ: Choose among the following which one is correct:
+
+Select one or more:
+1. Most of the statistics of the 3 prices are close enough to suspect that they refer to similar concepts. (CORRECT)
+2. There is little overlap between the 3 distributions as seen from the summary statistics.
+3. From the summary statistics, it is impossible to form an opinion on whether or not the 3 prices relate to the same concept.
+
+
+Now complement the descriptive statistics of the summary command with histogram and density plots of the 3 different prices, and answer the following question.
+
+Q2.2 - Prices (concepts) - MCQ: Choose among the following which one is correct:
+
+Select one or more:
+1. The summary statistics of the 3 different prices are similar, so all 3 prices should be usable interchangeably. (CORRECT)
+2. The centrality statistics of the 3 prices are significantly different, so they refer to very different concepts.
+3.  The dispersion statistics of the 3 prices are significantly different, so they refer to very different concepts.
+
+
+If the summary statistics (or histograms/densities) still leave some doubt in your mind regarding your answer to the first question, you may want to compare directly the distributions of the three different prices against each other using a qqplot.
+
+Q2.3 - Prices - qqplot - MCQ: Choose among the following which one is correct:
+
+Select one or more:
+1. The qqplots of each of the 3 different prices against another suggest that all 3 prices should be usable interchangeably. (CORRECT)
+2. The qqplots of each of the 3 different prices against another suggest that they refer to very different concepts.
+
+
+The price of a lot obviously partly depends on its size. Therefore, one would expect that the larger the lot size, the higher the price. Plot the relationship between the selling price (sprice) and the lot size (lotsize) using the following R command. You may have to load the lattice library in ITL for the xyplot function to be available:
+
+> library(lattice)
+>xyplot(sprice ~ lotsize, data=njgolf, scale=list(y=list(alternating=2)), xlab="lot size",ylab="selling price")
+
+On this plot, you can see that, surprisingly, lot size can be 0, while the price for these varies quite significantly. If you check content of the njgolf data structure, you will notice that there is a "factor" with multiple levels (values) to the lot size, meaning that there are actually different types of lots: houses and condominiums. You can condition the plot, by specifying that you want to test whether the values of the lotsize are strictly larger than 0 or not using the following:
+
+> xyplot(sprice ~ lotsize | lotsize >0, data=njgolf, scale=list(y=list(alternating=2)), xlab="lot size",ylab="selling price")
+
+You can see that the dataset is actually made of two different subsets, one about houses and the other about condominiums, the latter having a lot size of 0. There are better (but more complex) ways to visualise the two sub-datasets into a single plot, for example by using color codes, leading to a R such as:
+
+> xyplot(sprice ~ lotsize, group=factor(njgolf$lotsizef=="house", labels=c("condominium","house")), data=njgolf, panel=panel.superpose, pch=16, scale=list(y=list(alternating=2)), ylab="selling price", key=list(border=T,text=list(c("Condominium","House")),points=list(col=trellis.par.get("superpose.symbol")$col[1:2],pch=16),space="top"))
+
+While the plot looks much nicer than by using the condition, the R code does not look very pretty.
+
+Q2.4 - Scatterplot - MCQ: Based on the scatterplot of selling price against lot size, choose among the following ones those that could be correct:
+Select one or more:
+1. The data is made of two very different subsets, whose properties might be quite different. (CORRECT)
+2. There is a simple relationship between the selling price and the lot size.
+3. The relationship between the selling price and the lot size suggests that multiple variables may be needed to explain the selling price. (CORRECT)
+
+
+
+Understanding data typically requires comparing multiple variables, not just a single relationship between two variables. In the case of this dataset, selling price may depend on multiple aspects of the lots, such as number of beds, living area, dining area, etc.
+ 
+To check the relationship between a given variable and multiple others, you can rely on the pairs function to plot a scatterplot matrix involving these multiple variables. For example, use the variables "beds", "lrarea", "darea", "kitarea", and "famarea" to plot the selling price as a function of them using the following R command:
+
+> pairs(sprice ~ beds + lrarea + drarea + kitarea + famarea, data=njgolf)
+
+Q2.5 - Scatterplot matrix - comparison - MCQ: Choose among the following which ones seem possibly correct:
+Select one or more:
+1. All scatterplots in the scatterplot matrix appear the same.
+2. All scatterplots in the scatterplot matrix look quite different.
+3. Some scatterplots look quite similar, but not all. (CORRECT)
+
+
+While most scatterplots will not display a simple linear relationship between the considered variables, building a linear regression model to fit the data and plotting the resulting regression line helps understand the data. To do this, we introduce a new function in R to help display a regression line in the previous plot.
+
+Enter the following on your R console:
+
+panel.regression <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),cex = 1, col.regres = "red", ...)
+{
+    points(x, y, pch = pch, col = col, bg = bg, cex = cex)
+    ok <- is.finite(x) & is.finite(y)
+    if (any(ok))
+    abline(stats::lm(y[ok] ~ x[ok]), col = col.regres, ...)
+}
+
+Now just add a parameter to the previous plotting command by entering the following command:
+
+> pairs(sprice ~ beds + lrarea + drarea + kitarea + famarea, data=njgolf,panel=panel.regression)
+
+The slope of the fitted lines reflects the strength of the relationship between the two considered variables. A horizontal line indicates there is no relationship between the variables. The closer the fitted line is to a diagonal, the stronger the relationship between the variables.
+
+Q2.6 - Scatterplot matrix - regression lines - MCQ: Choose among the following which ones seem possibly correct about the scatterplot matrix of the whole dataset:
+
+Select one or more:
+1. The regression lines suggest there is no strong relationship between any of the variables.
+2. The regression lines suggest the existence of relationships between some of the variables. (CORRECT)
+3. The fitted lines all fall outside the set of points of the scatterplot, making the regression questionable.
+
+
+Now, your conclusion about the scatterplot matrix regarding which variables seem correlated could be very well polluted by the two sub-dataset present in the data, the one about houses and the other about condominiums. Therefore, it makes sense to re-check the scatterplot matrix when conditioning the data to be only about houses, for example as previously done by specifying that only the points having a strictly positive lotsize should be considered, with the following R command:
+
+> pairs(sprice ~ beds + lrarea + drarea + kitarea + famarea, data=njgolf[njgolf$lotsize > 0, ],panel=panel.regression)
+
+This new scatterplot matrix with its regression lines might tell you a different story regarding the strength of the relationships between the considered variables. Note that again, we consider a relationship to be "strong" based on the regression lines if the angle of the regression line is close enough to a diagonal (+45 or -45 degrees angle).
+
+Q2.7 - Scatterplot matrix - houses subset - MCQ: Choose among the following which ones seem possibly correct about the scatterplot matrix of the houses subset:
+Select one or more:
+1. The regression lines suggest that most (strictly more than half of the pairs) of the variables have a strong relationship.
+2. The regression lines suggest that most (strictly more than half of the pairs) of the variables do not have have a strong relationship. (CORRECT)
+3. The regression lines suggest that the whole dataset and the considered subset have exactly the same strength of relationships between variables.
+
+
+Now check the scatterplot matrix of the subset of the dataset related to condominiums only with the following command:
+> pairs(sprice ~ beds + lrarea + drarea + kitarea + famarea, data=njgolf[njgolf$lotsize == 0, ],panel=panel.regression)
+
+Q2.8 - Scatterplot matrix - condominiums subset - MCQ: Choose among the following which ones seem possibly correct about the scatterplot matrix of the condominiums subset:
+Select one or more:
+1. The regression lines suggest that most (strictly more than half the pairs) of the variables have a strong relationship.
+2. The regression lines suggest that most (strictly more than half the pairs) of the variables do not have have a strong relationship. (CORRECT)
+3. The limited number of points make most of the regression lines questionable. (CORRECT)
+
+
+When comparing the two scatterplot matrices, the one for the whole dataset and the one with the subset only for the houses, it appears that variable sprice has interesting/unexpected relationships with the other variables. 
+
+Q2.9 - Scatterplot matrix - comparison - MCQ: Choose among the following which one is correct:
+
+Select one or more:
+1. Comparing the two scatterplot matrices suggests that the strength of the relationships between the variables is the same for the two considered subsets of the data.
+2. Comparing the two scatterplot matrices suggests that the strength of the relationships between the variables is different across the two considered subsets of the data. (CORRECT)

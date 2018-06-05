@@ -1,0 +1,74 @@
+Import the data into RStudio from the following URL:
+http://www.eecs.qmul.ac.uk/~steve/ecs764/R-data/tweet-time-series
+Store the data in the variable named "tweet.time.series” for example.
+ 
+This data is a time-series of the number of tweets per second. The first column is the second, while the second column is the number of tweets observed during this second. Sub-select seconds 70,000-269,999, e.g., using the R command
+> data <- tweet.time.series[70000:269999,2]
+ 
+Note that depending on how you imported the data with R studio, you may have to access differently the second column of the tweet.time.series structure, e.g., it could be using "tweet.time.series$X2".
+
+Since some of the values might be missing from the data (their value is “NA”), let’s set these values to 0, using the following R command:
+> data[is.na(data)] <- 0
+
+Q.1
+Now use the “tseries” package to build a time-series object from the data, using the following commands:
+> data.ts = ts(data,frequency=100)
+> data.aggregated = aggregate(data.ts,FUN=mean)
+> data.decomposed = stl(data.ts,"periodic")
+> plot(data.decomposed)
+ 
+This will show you the time-series decomposition as a trend, seasonal component, and remainder.
+ 
+To access the trend, seasonal component, and remainder of the decomposed time-series, use the following:
+> data.decomposed$time.series[,”trend"]
+> data.decomposed$time.series[,”seasonal"]
+> data.decomposed$time.series[,"remainder"]
+ 
+In the decomposition, be careful about the values of the y-axis, which can be misleading. If the values of the y-axis are close enough to 0 for some component, but look like random noise (i.e., completely black), it probably means that the component is actually 0 but polluted by noise and therefore simply meaningless. This happens when the decomposition is unable to match the specific component to the data.
+
+Based on the decomposition of the time-series, which one (only one) of the following models best describes the time-series?
+Select one:
+1. Random noise.
+2. A trend plus random noise. (CORRECT)
+3. A seasonal component plus random noise.
+
+
+Q.2
+The decomposition of the time-series provided should provide a “remainder” component that should be uncorrelated, i.e., close to random noise. Check that this is the case base on the auto-correlation function (acf() in R).
+ 
+The auto-correlation function indicates that the remainder is indeed uncorrelated. Check among the following options the ones that are correct:
+
+Select one or more:
+a. The values of the ACF are close to 1.
+b. The values of the ACF are close to 0, a significant fraction of them within the expected confidence intervals. (CORRECT)
+c. The values of the ACF look like random noise, with values distributed uniformly between -1 and 1.
+
+
+Q.3
+The trend component of the time-series is likely to be very strongly correlated, as it describes a non-random process. However, there is always a risk that what looks like a trend is actually a stochastic process, i.e., based on random noise, e.g., a random walk.
+ 
+To check whether the trend of the data a stochastic process, rely on both (1) the auto-correlation of the differenced trend (using the diff() function), and (2) on the scatterplot of the trend against a 1-lagged version of it (using the zlag() function available from the TSA package).
+
+Warning: When the TSA package is loaded, the auto-correlation function is incorrectly computed. As soon as as you do not need a function from the TSA package, un-click it to ensure that you will not be mislead by its version of the acf() function.
+
+Check among the following options the ones (can be multiple) that are correct regarding the trend component:
+
+Select one or more:
+a. The ACF of the differenced trend shows strong correlations. Therefore, the trend is not a stochastic process. (CORRECT)
+b. The lagged scatterplot is close to a diagonal, meaning that the trend is very smooth, and therefore the trend is not stochastic. (CORRECT)
+c. The ACF of the differenced trend shows no correlations. Therefore, the trend is a stochastic process.
+d. The lagged scatterplot is very noisy (a cloud of points), and therefore the trend is stochastic.
+
+
+Q.4
+One way of judging the quality of a model is through the randomness of the remainder. A good model of the trend should lead to a remainder that is close to a random variable. There are multiple ways to check the remainder, e.g., explicitly modelling its probability distribution, looking at its correlation structure, or plotting a scatterplot of the remainder against its 1-lagged version.
+ 
+Check whether the remainder is consistent enough with an uncorrelated random process, as compared to the differenced time-series. You must check the ccdf, the acf, and the lagged scatterplot to be able to check the correct answers.
+
+Check among the following options all the ones that are correct:
+
+Select one or more:
+a. The log-log CCDF of the remainder is consistent with an exponential distribution, and shows a tail that is less “heavy” than the one of the differenced time-series. (CORRECT)
+b. The ACF of the remainder shows very low correlation compared to the one of the differenced time-series. (CORRECT)
+c. The lagged scatterplot shows that the remainder is more random than the differenced time-series. (CORRECT)
+d. There is no evidence that the remainder is close to a random process.

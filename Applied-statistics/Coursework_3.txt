@@ -1,0 +1,117 @@
+In this coursework, you will be given a dataset, and will be asked to try to find the distribution that fits best using a similar methodology as the one used during the lecture.
+
+The coursework is made of 5 parts.
+- The first are preliminaries where you will import the dataset as well as R code to plot the CCDF on a log-log scale.
+- The first graded part of the lab is related to model selection (2 questions).
+- The second graded part asks you to estimate the parameter values of specific distributions based on MLE (1 question).
+- The third and last graded part asks you to check the fit of specific distributions (3 questions).
+- Finally, the last part is a non-graded reflection exercise to make you think about whether you could have done anything different to change the outcome of the fitting exercise.
+
+
+As seen during the lecture, fitting a distribution involves an iterative approach based on 4 steps:
+Find the distribution from which the data might be drawn ;
+Estimate the parameters of that distribution ;
+Evaluate the quality of the fit ;
+If the fit is not good enough, go back to 1; otherwise stop.
+ 
+The first step requires choosing one or multiple “models” (specific or classes of distributions) from which the data might be drawn. To this purpose, we will rely on two very important tools: the plot of the CCDF on a log-log scale and the famous qqplot.
+ 
+The plot of the CCDF on a log-log scale allows to make a very strong guess at which class of distribution the data belongs, by visually “testing" what type of tail the data has, and therefore allowing a first guess as to which class the data belongs, i.e., exponential, extreme value, or heavy-tailed.
+ 
+To be able to plot a CCDF on a log-log scale, import in RStudio the code to compute it from the following URL: http://www.eecs.qmul.ac.uk/~steve/ecs764/plot-ccdf.R
+ 
+To be able to do this, you must first save the code at the URL into a local file, then select “Code” and then “Source file” to import the code. Once this is done, you can use the plot.ccdf() function on data.
+ 
+Now, import the data into RStudio from the following URL:
+http://www.eecs.qmul.ac.uk/~steve/ecs764/R-data/tweet-time-series
+
+Store the data in a variable named "tweettimeseries” for example.
+ 
+This data is a time-series of the number of tweets per second. The first column is the second, while the second column is the number of tweets observed during this second. Sub-select seconds 60,000-69,999, e.g., using the R command
+data <- tweettimeseries[60000:69999,2]
+ 
+Note that depending on how you imported the data with R studio, you may have to access differently the second column of the data structure, e.g., it could be using "data$X2".
+
+Once you have the data, plot the CCDF on a log-log scale using the plot.ccdf(data) command.
+
+
+Q.1
+When observing the CCDF on a log-log scale of this data, what can you say about the distribution and its tail? To help you, generate random numbers distributed according to Normal, Weibull, and Pareto distributions (see the slides of the lecture to remember how to do this), and have a look at their CCDF on a log-log scale using the plot.ccdf() command.
+
+Question: Choose among the following options the one that is correct.
+
+Select one or more:
+a. The tail is similar to a strict heavy-tailed distribution, i.e., it fits a straight line on the log-log CCDF.
+b. The tail is falling fast enough to be either an exponential or an extreme value distribution. (CORRECT)
+c. The tail is not falling fast enough to be an exponential distribution.
+
+
+Q.2
+When observing the CCDF on a log-log scale of the data (not the randomly generated numbers), what model do you think is the most relevant? Justify your answer.
+
+Recall that there are 3 models: exponential, extreme value, and heavy-tailed.
+
+The tails are decreasing fast, it decay as an exponential, thus it is not a heavy-tailed distribution.
+
+Choosing between 2, it should be an exponential distribution because of a sharp corner.
+
+
+Q.3
+Let’s assume for now that the distribution is not a heavy-tailed one, but either an extreme value or an exponential. This leaves with a lot of options, e.g., Weibull, Gamma, logistic, Normal, Poisson. Now, we need to estimate the parameters of the candidate distributions, i.e., step 2 of the methodology.
+ 
+Rely on the fitdistr() function from the “MASS” package to estimate the parameters of a few candidate distributions using the maximum likelihood estimation (MLE) method. Check the following distributions: Normal, Poisson, Gamma, and Weibull. The first two are exponential distributions, while the last two are extreme value distributions.
+ 
+Select which one(s) of the following assertion(s) about the value of the fitted parameters by MLE is (are) correct.
+Select one or more:
+a. The standard deviation fitted by MLE for the normal distribution is high, i.e., much higher than 1. (CORRECT)
+b. The value of the shape parameter fit by MLE for the Weibull distribution is larger than 1, indicating that the data is not exponential but has a heavier distribution.
+c. The value of the shape parameter fit by MLE for the Gamma distribution is larger than 1, indicating that the data has a shape heavier than a Normal distribution. (CORRECT)
+d. The value of lambda for the fit by MLE of the Poisson distribution is smaller than 10.
+
+
+Q.4
+Based on the parameter values returned by MLE for the various tested distributions, the right type of probability distribution can be guessed. However, even the best parameter-based fit by MLE might not be a convincing fit. Therefore, we will now check the fit based on the qqplot.
+ 
+For each distribution among the Normal, Poisson, Gamma, and Weibull, generate 10,000 points distributed according to these distributions, have the parameter value returned by the fitdistr() command in the previous question. Save these points in R and plot the qqplot of each of these set of points against the data (using the qqplot() command).
+ 
+Based on the visual inspection of the qqplots, which one(s) of the following assertions is (are) correct.
+Select one or more:
+a. The Weibull distribution fits the data well.
+b. The Normal distribution fits the data well.
+c. The Gamma distribution fits the data well.
+d. None of the mentioned distributions fit the data well. (CORRECT)
+e. The Poisson distribution fits the data well.
+
+
+Q.5
+Now that the qqplot has provided some insight into which distribution is likely to fit, perform the Kolmogorov-Smirnov (KS) test on each of the fitted distributions against the data, using the ks.test() R command. Note that the KS test may require that you provide the parameter values as found by MLE for some distributions. For the Normal distribution, use “pnorm” as second parameter to ks.test, and specify both the mean and the standard deviation (sd) as third and fourth parameters. For the Poisson distribution, use “ppois” as the second parameter, and specify lambda as third. For the Gamma distribution, use “pgamma” for the second parameter and specify the values of the shape and rate parameters as third and fourth. Finally, for the Weibull distribution, use “pweibull” for the second parameter and specify the values of the shape and scale parameters as third and fourth.
+ 
+As an example, for the Normal distribution you would use the following command:
+ks.test(data,”rnorm”,mean=X,sd=Y) where X and Y were values returned by the fitdistr() command.
+Warning: Do not use the version of the test that would compare the data against randomly generated point at the previous question.
+ 
+Based on the p-values returned by ks.test(), how many distributions fit the data?
+Select one or more:
+a. 0 (CORRECT)
+b. 1
+c. 2
+d. 3
+e. 4
+
+
+Q.6
+Relying on the p-value of the test as in Q2.5, even though the right way, is very strict given that KS is a very sensitive test. If you were to rely only on the distance (D) of the KS test instead of the p-value, which distribution fits the data best?
+Select one or more:
+1. Normal (CORRECT)
+2. Poisson
+3. Gamma
+4. Weibull
+
+
+Given that the data is likely to be distributed according to a distribution of a specific class, reflect on what you might have done differently to improve the fit to the data. Consider the following options:
+Trimming the data;
+Using a different subset of the Twitter dataset;
+Considering additional distributions for a given class of distributions;
+Using a different test than KS, e.g., Shapiro-Wilkes.
+ 
+Which one(s) of these options would you be willing to rely on, and which one(s) do you believe might have made a difference in the outcome of the fitting attempt?
