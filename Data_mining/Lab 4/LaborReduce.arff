@@ -1,0 +1,67 @@
+@relation 'labor-neg-data-weka.filters.unsupervised.attribute.Remove-R1,3-6,8-10,13-15'
+
+@attribute wage-increase-first-year numeric
+@attribute pension {none,ret_allw,empl_contr}
+@attribute statutory-holidays numeric
+@attribute vacation {below_average,average,generous}
+@attribute contribution-to-health-plan {none,half,full}
+@attribute class {bad,good}
+
+@data
+5,?,11,average,?,good
+4.5,ret_allw,11,below_average,full,good
+?,empl_contr,11,generous,half,good
+3.7,?,?,?,?,good
+4.5,?,12,average,half,good
+2,?,12,average,?,good
+4,empl_contr,12,generous,half,good
+6.9,?,12,below_average,?,good
+3,?,11,below_average,?,good
+5.7,empl_contr,11,generous,?,good
+3.5,?,13,generous,full,good
+6.4,?,15,?,?,good
+3.5,?,10,below_average,half,bad
+3.5,?,13,generous,full,good
+3,?,11,generous,?,good
+4.5,empl_contr,11,average,?,good
+2.8,?,12,below_average,?,good
+2.1,ret_allw,9,below_average,none,bad
+2,none,11,average,none,bad
+4,?,15,generous,?,good
+4.3,?,12,generous,full,good
+2.5,none,11,below_average,?,bad
+3.5,?,?,?,?,good
+4.5,?,10,generous,full,good
+6,?,9,generous,?,good
+2,none,10,below_average,full,bad
+4.5,?,10,below_average,half,good
+3,?,12,generous,full,good
+5,?,11,below_average,full,good
+2,none,10,average,full,bad
+4.5,?,11,average,?,good
+3,none,10,below_average,full,bad
+2.5,empl_contr,10,average,?,bad
+4,none,10,below_average,none,bad
+2,none,10,below_average,full,bad
+2,none,11,average,full,bad
+2,ret_allw,11,generous,none,bad
+2.8,empl_contr,9,below_average,none,bad
+2,empl_contr,10,average,none,bad
+4.5,?,12,average,half,good
+4,none,11,average,none,bad
+2,empl_contr,12,generous,full,bad
+2.5,empl_contr,12,average,?,bad
+2.5,none,11,below_average,?,bad
+4,none,10,below_average,none,bad
+4.5,?,10,below_average,half,bad
+4.5,?,11,average,full,good
+4.6,?,?,?,half,good
+5,?,11,below_average,full,good
+5.7,ret_allw,11,average,full,good
+7,?,11,?,?,good
+2,empl_contr,?,?,?,good
+3.5,?,13,generous,full,good
+4,empl_contr,11,average,full,good
+5,empl_contr,11,generous,full,good
+5,?,12,average,half,good
+6,?,9,generous,full,good

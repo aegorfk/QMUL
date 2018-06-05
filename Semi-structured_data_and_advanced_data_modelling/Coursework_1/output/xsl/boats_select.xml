@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><boats>
+  
+
+  <boat><name>Freedom</name><make>Vancouver</make><type>sail</type><year>1980</year><length>36</length><price>50000</price></boat>
+
+  
+
+  <boat><name>Freespirit</name><make>Hallberg Rassy 36</make><type>sail</type><year>2006</year><length>36</length><price>90000</price></boat>
+</boats>
